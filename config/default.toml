@@ -1,0 +1,6 @@
+# SokanLab default config — schema_version 1
+schema_version = 1
+theme = "dark"
+data_dir = "data"
+locale = "id-ID"
+offline_only = true

@@ -1,0 +1,13 @@
+[package]
+name = "sokanlab-data-store"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[dependencies]
+arrow-array = "60"
+arrow-schema = "60"
+parquet = "60.0.0"
+rusqlite = { version = "0.40.2", features = ["bundled"] }
+sha2 = "0.11.1"
+sokanlab-domain = { version = "0.1.0", path = "../domain" }

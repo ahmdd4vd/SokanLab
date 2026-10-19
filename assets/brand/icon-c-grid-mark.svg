@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>SokanLab icon variant C — Grid Mark</title>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="#14181D"/>
+  <g stroke="#5B6570" stroke-width="12" opacity="0.9">
+    <line x1="96" y1="176" x2="416" y2="176"/>
+    <line x1="96" y1="336" x2="416" y2="336"/>
+    <line x1="176" y1="96" x2="176" y2="416"/>
+    <line x1="336" y1="96" x2="336" y2="416"/>
+  </g>
+  <rect x="216" y="152" width="80" height="208" rx="26" fill="#E8A33D"/>
+  <rect x="246" y="104" width="20" height="304" rx="10" fill="#F6F3EC"/>
+</svg>

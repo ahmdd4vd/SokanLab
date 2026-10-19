@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <title>SokanLab icon variant B — Dual Bar</title>
+  <rect x="16" y="16" width="480" height="480" rx="112" fill="#F6F3EC"/>
+  <rect x="136" y="176" width="96" height="176" rx="30" fill="#14181D"/>
+  <rect x="280" y="128" width="96" height="272" rx="30" fill="#E8A33D"/>
+  <rect x="174" y="112" width="20" height="304" rx="10" fill="#14181D"/>
+  <rect x="318" y="72" width="20" height="368" rx="10" fill="#E8A33D"/>
+</svg>

@@ -1,0 +1,13 @@
+[package]
+name = "sokanlab-ui"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[dependencies]
+egui = "0.37"
+sokanlab-backtest = { version = "0.1.0", path = "../backtest" }
+sokanlab-chart = { version = "0.1.0", path = "../chart" }
+sokanlab-domain = { version = "0.1.0", path = "../domain" }
+sokanlab-indicators = { version = "0.1.0", path = "../indicators" }
+sokanlab-strategy-api = { version = "0.1.0", path = "../strategy-api" }

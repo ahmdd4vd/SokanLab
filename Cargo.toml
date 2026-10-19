@@ -1,0 +1,14 @@
+[workspace]
+resolver = "2"
+members = [
+  "apps/desktop",
+  "crates/backtest",
+  "crates/chart",
+  "crates/data-import",
+  "crates/data-store",
+  "crates/domain",
+  "crates/export",
+  "crates/indicators",
+  "crates/strategy-api",
+  "crates/ui",
+]

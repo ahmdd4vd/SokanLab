@@ -1,0 +1,6 @@
+/target
+/dist
+/out
+
+# Data impor lokal (jangan di-commit)
+/data

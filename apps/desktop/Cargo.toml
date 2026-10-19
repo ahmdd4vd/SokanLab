@@ -1,0 +1,22 @@
+[package]
+name = "sokanlab-desktop"
+version = "0.1.0"
+edition = "2021"
+license = "Apache-2.0"
+
+[[bin]]
+name = "sokanlab-desktop"
+path = "src/main.rs"
+
+[dependencies]
+eframe = "0.37"
+egui = "0.37"
+epaint = "0.37"
+log = "0.4.34"
+sokanlab-backtest = { version = "0.1.0", path = "../../crates/backtest" }
+sokanlab-chart = { version = "0.1.0", path = "../../crates/chart" }
+sokanlab-data-import = { version = "0.1.0", path = "../../crates/data-import" }
+sokanlab-data-store = { version = "0.1.0", path = "../../crates/data-store" }
+sokanlab-domain = { version = "0.1.0", path = "../../crates/domain" }
+sokanlab-export = { version = "0.1.0", path = "../../crates/export" }
+sokanlab-ui = { version = "0.1.0", path = "../../crates/ui" }

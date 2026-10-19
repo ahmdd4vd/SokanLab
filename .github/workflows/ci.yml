@@ -1,0 +1,70 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  build-test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: clippy, rustfmt
+      - run: cargo fmt --check
+      - run: cargo clippy --workspace --all-targets -- -D warnings
+      - run: cargo test --workspace
+      - run: cargo build --release
+      # Import fixture → Parquet + katalog (offline, tanpa jaringan)
+      - name: import fixture (unix)
+        if: matrix.os != 'windows-latest'
+        run: >
+          ./target/release/sokanlab-desktop import --file fixtures/valid-3bars.csv
+          --symbol BTC/USDT --timeframe 1m
+          --db target/ci-catalog.db --out target/ci.parquet
+      - name: import fixture (windows)
+        if: matrix.os == 'windows-latest'
+        run: >
+          target\release\sokanlab-desktop.exe import --file fixtures\valid-3bars.csv
+          --symbol BTC/USDT --timeframe 1m
+          --db target\ci-catalog.db --out target\ci.parquet
+      # Backtest CLI offline → 5 berkas laporan
+      - name: backtest (unix)
+        if: matrix.os != 'windows-latest'
+        run: >
+          ./target/release/sokanlab-desktop backtest --parquet target/ci.parquet
+          --strategy buy_and_hold --out target/ci-bt
+      - name: backtest (windows)
+        if: matrix.os == 'windows-latest'
+        run: >
+          target\release\sokanlab-desktop.exe backtest --parquet target\ci.parquet
+          --strategy buy_and_hold --out target\ci-bt
+      # Persistence: simpan layout → muat ulang (tanpa window)
+      - name: layout roundtrip (unix)
+        if: matrix.os != 'windows-latest'
+        run: |
+          ./target/release/sokanlab-desktop --save-layout target/ci-layout.json
+          ./target/release/sokanlab-desktop --headless --layout target/ci-layout.json
+      - name: layout roundtrip (windows)
+        if: matrix.os == 'windows-latest'
+        run: |
+          target\release\sokanlab-desktop.exe --save-layout target/ci-layout.json
+          target\release\sokanlab-desktop.exe --headless --layout target\ci-layout.json
+      # Render chart headless → PNG (verifikasi visual otomatis, tanpa display)
+      - name: render chart (unix)
+        if: matrix.os != 'windows-latest'
+        run: ./target/release/sokanlab-desktop --render --out target/ci-shot.png --bars 200 --size 800x600
+      - name: render chart (windows)
+        if: matrix.os == 'windows-latest'
+        run: target\release\sokanlab-desktop.exe --render --out target\ci-shot.png --bars 200 --size 800x600
+      # Smoke tanpa display (--smoke GUI butuh display; dipakai di dev via Xvfb)
+      - name: headless smoke (unix)
+        if: matrix.os != 'windows-latest'
+        run: ./target/release/sokanlab-desktop --headless
+      - name: headless smoke (windows)
+        if: matrix.os == 'windows-latest'
+        run: target\release\sokanlab-desktop.exe --headless
+      # Audit offline: 0 pola jaringan di kode + 0 klien jaringan di graph build
+      - name: audit offline
+        if: matrix.os == 'ubuntu-latest'
+        run: scripts/check-offline.sh
