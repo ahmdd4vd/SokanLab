@@ -89,6 +89,32 @@ sementara atau `CARGO_BUILD_JOBS=1`.
 Dependensi DLL biner hanya DLL sistem Windows (KERNEL32, USER32, GDI32, DXGI, DWrite,
 UIAutomation, ws2_32, dst) — tidak ada `libgcc_s`/`libwinpthread`.
 
+## Rilis otomatis
+
+Tag `v*` memicu workflow `release` (`.github/workflows/release.yml`) yang:
+
+1. membangun biner native untuk Linux (`x86_64-unknown-linux-gnu`), Windows
+   (`x86_64-pc-windows-msvc`), dan macOS (`aarch64-apple-darwin`);
+2. membuat data contoh deterministik — `scripts/gen-sample-data.py` memakai seed
+   tetap, jadi CSV/Parquet-nya byte-identik di semua mesin;
+3. menjalankan `import` CLI agar paket memuat `catalog.db` + Parquet;
+4. mengemas paket portable + `SHA256SUMS.txt` lewat `scripts/package-preview.py`
+   dan mengunggah `sokanlab-<tag>-<platform>.zip|tar.gz` + `.sha256` ke release.
+
+Uji pengemasan lokal (tanpa CI):
+
+```bash
+python3 scripts/gen-sample-data.py --out stage/data
+./target/release/sokanlab-desktop import --file stage/data/contoh-BTCUSDT-1h.csv \
+  --symbol BTC/USDT --timeframe 1h --db stage/data/catalog.db --out stage/data/BTCUSDT-1h.parquet
+python3 scripts/package-preview.py --name sokanlab-demo-linux-x86_64 \
+  --bin target/release/sokanlab-desktop --format tar.gz --out dist --data-dir stage/data
+```
+
+Paket preview ini dibangun manual lewat cross-compile `x86_64-pc-windows-gnu` +
+skrip di `packaging/windows/`; paket dari workflow memakai target MSVC native
+dengan berkas launcher yang sama.
+
 ## Lihat juga
 
 - `MULAI-DI-SINI.txt` (di dalam paket) — panduan pemakaian singkat

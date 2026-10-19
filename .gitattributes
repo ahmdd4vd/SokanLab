@@ -1,0 +1,4 @@
+# Berkas paket Windows (.bat/.txt CRLF) harus byte-identik di semua platform.
+# `-text` mematikan normalisasi line-ending git, jadi runner Linux/macOS
+# meng-checkout berkas ini persis seperti di repo (CRLF).
+packaging/windows/* -text

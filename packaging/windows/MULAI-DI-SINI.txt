@@ -1,0 +1,80 @@
+SokanLab 0.1.0 - Preview Windows x64
+====================================
+
+Ini build preview untuk dicoba di Windows. Bukan installer, cukup extract ZIP
+ke satu folder lalu jalankan. Aplikasi tetap 100% offline: tidak ada koneksi
+jaringan, akun, atau data pihak ketiga.
+
+CARA CEPAT
+----------
+1. Extract SELURUH isi ZIP ke satu folder (jangan jalankan dari dalam ZIP).
+2. Klik dua kali:
+   - SokanLab.bat          -> chart bersih + SMA/EMA/VWAP + RSI/MACD
+   - SokanLab-demo.bat     -> chart contoh dengan 10 alat gambar
+3. Kalau Windows SmartScreen muncul: More info -> Run anyway.
+   Build ini belum ditandatangani (unsigned), jadi peringatan itu normal.
+
+JANGAN memindahkan sokanlab-desktop.exe sendirian. Folder config/ dan data/
+harus tetap di sebelahnya, karena aplikasi membacanya secara relatif.
+
+Data contoh
+-----------
+data/BTCUSDT-1h.parquet berisi 2.400 bar 1 jam data SINTETIS (bukan data pasar
+nyata). Layout demo memakai data ini untuk memperlihatkan alat gambar.
+
+Mencoba data CSV sendiri
+------------------------
+Klik dua kali Impor-CSV.bat, lalu ikuti pertanyaannya. Format CSV:
+
+  timestamp,open,high,low,close,volume
+  1767225600,10000,10005,9957,9965,3970
+
+- timestamp: epoch detik atau milidetik (integer)
+- open/high/low/close/volume: integer
+- waktu harus naik ketat, OHLC konsisten, volume >= 0
+- timeframe: 1m, 1h, atau 1D
+
+Impor-CSV.bat akan menyisihkan katalog contoh supaya dataset baru yang aktif.
+Untuk kembali ke contoh: hapus data/catalog.db lalu ganti nama
+data/catalog-sample.db menjadi data/catalog.db (dan parquet contoh kembali).
+
+PINTASAN PENTING
+----------------
+F1                 dialog semua pintasan
+Alt+T/H/V/C/F      trend / horizontal / vertical / crossline / fib
+1-9                pilih alat (khusus SokanLab)
+Ctrl+Z / Ctrl+Y    undo / redo
+Ctrl+Alt+H         sembunyikan/tampilkan semua gambar
+Alt+R              fit seluruh data
+Alt+G              pergi ke tanggal
+Alt+S              snapshot PNG (data/snapshot-<epoch>.png)
+Ctrl+S             simpan layout
+Del                hapus objek terpilih
+Ctrl+klik/seret    multi-seleksi / kotak seleksi
+Ctrl+seret objek   klon lalu geser
+Esc                batal berjenjang
+
+Catatan: toolbar alat bisa di-scroll. Panel kiri berisi properti objek,
+indikator, backtest, object tree, dan template gaya.
+
+TROUBLESHOOTING
+---------------
+- Layar hitam / gagal membuat GPU: coba SokanLab-OpenGL.bat.
+  (memaksa backend OpenGL; butuh driver GPU yang mendukung OpenGL 3.3+)
+- Tidak ada candle: pastikan config/ dan data/ ada di folder yang sama dengan
+  .exe, dan jalankan lewat .bat (bukan dari folder lain).
+- Buka dari Command Prompt untuk melihat pesan error:
+    sokanlab-desktop.exe
+- Snapshot dan laporan backtest ditulis relatif terhadap folder ini.
+
+BATASAN PREVIEW
+---------------
+- Build di-cross-compile dari Linux (target x86_64-pc-windows-gnu), sudah
+  smoke-test di Wine, TAPI belum diuji di Windows asli. Mohon laporkan error.
+- Belum ada installer, code signing, auto-update, atau build 32-bit.
+- Copyright 2026 ahmdd4vd (Apache-2.0); lihat LICENSE + NOTICE.
+- Daftar fitur yang sudah/belum ada: docs/TV-PARITY.md.
+- Backtest: sinyal bar t -> fill open bar t+1; fee default 10 bps + slippage
+  1 tick; lihat docs/BACKTEST.md.
+
+Lisensi Apache-2.0. Lihat LICENSE, NOTICE, dan THIRD-PARTY.md.

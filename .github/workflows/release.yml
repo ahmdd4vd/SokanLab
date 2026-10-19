@@ -1,0 +1,96 @@
+name: release
+
+# Dipicu saat tag versi di-push (mis. `git tag v0.1.0-preview && git push origin v0.1.0-preview`),
+# atau manual lewat workflow_dispatch dengan mengisi nama tag.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag rilis (mis. v0.1.0-preview)"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+            platform: linux-x86_64
+            format: tar.gz
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
+            platform: windows-x86_64
+            format: zip
+          - os: macos-latest
+            target: aarch64-apple-darwin
+            platform: macos-arm64
+            format: tar.gz
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: build (release)
+        run: cargo build --release -p sokanlab-desktop --target ${{ matrix.target }}
+      - name: verifikasi offline ringkas
+        if: matrix.os == 'ubuntu-latest'
+        run: scripts/check-offline.sh
+      - name: paket portable
+        shell: bash
+        env:
+          TAG: ${{ github.event.inputs.tag || github.ref_name }}
+        run: |
+          set -euo pipefail
+          name="sokanlab-${TAG}-${{ matrix.platform }}"
+          bin="target/${{ matrix.target }}/release/sokanlab-desktop"
+          if [ "${{ runner.os }}" = "Windows" ]; then bin="${bin}.exe"; fi
+
+          # Data contoh deterministik (seed tetap) + katalog/Parquet via CLI.
+          python3 scripts/gen-sample-data.py --out stage/data
+          "./${bin}" import \
+            --file stage/data/contoh-BTCUSDT-1h.csv \
+            --symbol BTC/USDT --timeframe 1h \
+            --db stage/data/catalog.db \
+            --out stage/data/BTCUSDT-1h.parquet
+
+          extra=()
+          if [ "${{ matrix.os }}" = "windows-latest" ]; then
+            extra=(packaging/windows/SokanLab.bat
+                   packaging/windows/SokanLab-demo.bat
+                   packaging/windows/SokanLab-OpenGL.bat
+                   packaging/windows/Impor-CSV.bat
+                   packaging/windows/MULAI-DI-SINI.txt)
+          fi
+
+          python3 scripts/package-preview.py \
+            --name "${name}" \
+            --bin "${bin}" \
+            --format ${{ matrix.format }} \
+            --out dist \
+            --data-dir stage/data \
+            --work "dist/${name}" \
+            --extra "${extra[@]}"
+
+          ls -l dist
+      - name: unggah ke release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.event.inputs.tag || github.ref_name }}
+          name: SokanLab ${{ github.event.inputs.tag || github.ref_name }}
+          generate_release_notes: true
+          prerelease: ${{ contains(github.event.inputs.tag || github.ref_name, '-') }}
+          files: |
+            dist/*.zip
+            dist/*.tar.gz
+            dist/*.sha256

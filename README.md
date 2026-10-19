@@ -12,6 +12,8 @@ jaringan, tanpa akun, tanpa endpoint pihak ketiga. Data sepenuhnya milik penggun
 > via Wine — lihat `docs/WINDOWS-PREVIEW.md` — tetapi **belum dijalankan di Windows asli**;
 > macOS belum diuji. Lihat `ROADMAP.md` untuk status jujur per fase.
 
+Unduh preview: [Releases](https://github.com/ahmdd4vd/SokanLab/releases) — `v0.1.0-preview`.
+
 Bukan tiruan TradingView: SokanLab hanya mengambil **kebutuhan** (charting + backtest),
 bukan kode, aset, brand, atau format skripnya. Semua visual, nama, dan bagian dalam
 adalah karya orisinal (lihat `PRODUCT.md` dan `NOTICE`).
